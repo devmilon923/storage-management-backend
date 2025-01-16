@@ -39,3 +39,4 @@ const filesSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+const Files = mongoose.model("files", filesSchema);
