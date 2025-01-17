@@ -1,5 +1,7 @@
 const Files = require("../models/filesSchema");
-
+const path = require("path");
+const mongoose = require("mongoose");
+const fs = require("fs");
 const addFiles = async (req, res) => {
   try {
     const files = req.files;
@@ -25,7 +27,23 @@ const addFiles = async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 };
+const viewFiles = async (req, res) => {
+  try {
+    const file = await Files.findById(req.params.id);
 
+    if (file?.user.toString() !== req.userInfo._id)
+      return res.status(404).send("Access denie");
+    if (!file) {
+      return res
+        .status(404)
+        .send({ message: "File not found in the database." });
+    }
+    res.status(200).send(`http://localhost:4000/${file.path}`);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
 module.exports = {
   addFiles,
+  viewFiles,
 };
