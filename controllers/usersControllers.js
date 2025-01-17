@@ -1,5 +1,8 @@
+const hash = require("../services/hashPassword");
+
 const createUser = async (req, res) => {
-  res.send(req.body);
+  const password = await hash(req.body.password);
+  res.send(password);
 };
 
 module.exports = {
