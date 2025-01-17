@@ -16,7 +16,6 @@ route.get("/send-email-verification-otp", verifyUser, handleEmailVerifyOtp);
 route.post("/send-reset-otp", sendResetVerifyOtp);
 route.post("/verify-email-otp", verifyUser, handleEmailVerifyOtp);
 route.post("/verify-reset-password-otp", handleResetPasswordVerifyOtp);
-// route.post("/send-password-reset-otp", sendPasswordResetOtp);
 route.get("/dashboard", verifyUser, dashboard);
 
 module.exports = route;

@@ -18,7 +18,6 @@ const filesSchema = mongoose.Schema(
     folder: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "folders",
-      required: true,
       default: null,
     },
     type: {
@@ -40,3 +39,4 @@ const filesSchema = mongoose.Schema(
   { timestamps: true }
 );
 const Files = mongoose.model("files", filesSchema);
+module.exports = Files;

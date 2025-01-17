@@ -20,10 +20,8 @@ const createUser = async (req, res) => {
     });
   }
 };
-
 const loginUser = async (req, res) => {
   try {
-    // const hashPassword = await hash(req.body.password);
     const user = await User.findOne({ email: req.body.email });
     const dbPassword = user.password;
     const isValidPassword = await verifyHash(req.body.password, dbPassword);
@@ -51,7 +49,6 @@ const dashboard = async (req, res) => {
     message: req.userInfo,
   });
 };
-
 const sendEmailVerifyOtp = async (req, res) => {
   try {
     const user = await User.findById(req.userInfo._id);
