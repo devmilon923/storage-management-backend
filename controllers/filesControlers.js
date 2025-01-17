@@ -1,7 +1,4 @@
 const Files = require("../models/filesSchema");
-const path = require("path");
-const mongoose = require("mongoose");
-const fs = require("fs");
 const addFiles = async (req, res) => {
   try {
     const files = req.files;
@@ -38,7 +35,8 @@ const viewFiles = async (req, res) => {
         .status(404)
         .send({ message: "File not found in the database." });
     }
-    res.status(200).send(`http://localhost:4000/${file.path}`);
+
+    res.status(200).send(`${process.env.appURL}/${file.path}`);
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
