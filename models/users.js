@@ -26,7 +26,6 @@ const usersSchema = mongoose.Schema(
     },
     otpType: {
       type: String,
-      required: true,
       default: "verify_email",
       enum: ["verify_email", "reset_password"],
     },
@@ -36,7 +35,6 @@ const usersSchema = mongoose.Schema(
     },
     isVerifyed: {
       type: Boolean,
-      required: true,
       default: false,
     },
   },
