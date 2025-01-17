@@ -1,4 +1,7 @@
 const Files = require("../models/filesSchema");
+const Folders = require("../models/folderSchema");
+const User = require("../models/users");
+const mongoose = require("mongoose");
 const addFiles = async (req, res) => {
   try {
     const files = req.files;
@@ -41,7 +44,42 @@ const viewFiles = async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 };
+
+const createFolder = async (req, res) => {
+  try {
+    const folder = await Folders.findOne({
+      name: req.params.name,
+      user: req.userInfo._id,
+    });
+    if (folder) {
+      return res.status(404).send("Already has this folder name");
+    }
+    const folderCreate = await Folders.create({
+      name: req.params.name,
+      user: req.userInfo._id,
+    });
+
+    res.status(200).send(folderCreate);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+
+const getFolderContent = async (req, res) => {
+  try {
+    const folder = await Folders.find({
+      name: req.params.name,
+      user: req.userInfo._id,
+    }).populate("files");
+
+    res.status(200).send(folder.files || []);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
 module.exports = {
   addFiles,
   viewFiles,
+  createFolder,
+  getFolderContent,
 };

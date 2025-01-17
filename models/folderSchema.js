@@ -2,10 +2,14 @@ const mongoose = require("mongoose");
 
 const folderSchema = mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
     name: {
       type: String,
       required: true,
-      unique: [true, "Folder name already has"],
     },
     files: [
       {
@@ -17,3 +21,4 @@ const folderSchema = mongoose.Schema(
   { timestamps: true }
 );
 const Folders = mongoose.model("folders", folderSchema);
+module.exports = Folders;
