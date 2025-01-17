@@ -25,6 +25,12 @@ const usersSchema = mongoose.Schema(
       required: true,
       default: null,
     },
+    otpType: {
+      type: String,
+      required: true,
+      default: "verify_email",
+      enum: ["verify_email", "reset_password"],
+    },
     expireIn: {
       type: Number,
       required: true,
