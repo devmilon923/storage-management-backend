@@ -30,11 +30,7 @@ const loginUser = async (req, res) => {
         status: false,
         message: "Invalid credentials",
       });
-    // if (!user.isVerifyed)
-    //   return res.status(400).send({
-    //     status: false,
-    //     message: "Please verify your account",
-    //   });
+
     const token = createJWT({ _id: user._id });
     res.status(200).send({
       status: true,
@@ -50,7 +46,7 @@ const loginUser = async (req, res) => {
 const dashboard = async (req, res) => {
   res.status(200).send({
     status: true,
-    message: "Ok",
+    message: req.userInfo,
   });
 };
 module.exports = {

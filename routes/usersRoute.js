@@ -10,6 +10,6 @@ const route = express.Router();
 
 route.post("/create", createUser);
 route.post("/login", loginUser);
-route.post("/dashboard", dashboard);
+route.get("/dashboard", verifyUser, dashboard);
 
 module.exports = route;
