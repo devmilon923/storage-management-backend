@@ -1,5 +1,6 @@
 const User = require("../models/users");
-const hash = require("../services/hashPassword");
+const createJWT = require("../services/createJWT");
+const { hash, verifyHash } = require("../services/hashPassword");
 
 const createUser = async (req, res) => {
   try {
@@ -18,6 +19,42 @@ const createUser = async (req, res) => {
   }
 };
 
+const loginUser = async (req, res) => {
+  try {
+    // const hashPassword = await hash(req.body.password);
+    const user = await User.findOne({ email: req.body.email });
+    const dbPassword = user.password;
+    const isValidPassword = await verifyHash(req.body.password, dbPassword);
+    if (!isValidPassword)
+      return res.status(400).send({
+        status: false,
+        message: "Invalid credentials",
+      });
+    // if (!user.isVerifyed)
+    //   return res.status(400).send({
+    //     status: false,
+    //     message: "Please verify your account",
+    //   });
+    const token = createJWT({ _id: user._id });
+    res.status(200).send({
+      status: true,
+      token,
+    });
+  } catch (error) {
+    res.status(400).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+const dashboard = async (req, res) => {
+  res.status(200).send({
+    status: true,
+    message: "Ok",
+  });
+};
 module.exports = {
   createUser,
+  loginUser,
+  dashboard,
 };

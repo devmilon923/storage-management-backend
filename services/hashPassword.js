@@ -10,5 +10,15 @@ const hash = async (password) => {
     return null;
   }
 };
+const verifyHash = async (password, hashPassword) => {
+  try {
+    const passwordHash = await bcrypt.compare(password, hashPassword);
+    console.log(passwordHash);
+    return passwordHash;
+  } catch (error) {
+    console.error("Error hashing password:", error);
+    return false;
+  }
+};
 
-module.exports = hash;
+module.exports = { hash, verifyHash };
