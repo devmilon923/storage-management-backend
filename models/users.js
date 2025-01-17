@@ -22,7 +22,6 @@ const usersSchema = mongoose.Schema(
     },
     otp: {
       type: Number,
-      required: true,
       default: null,
     },
     otpType: {
@@ -32,8 +31,7 @@ const usersSchema = mongoose.Schema(
       enum: ["verify_email", "reset_password"],
     },
     expireIn: {
-      type: Number,
-      required: true,
+      type: Date,
       default: null,
     },
     isVerifyed: {
@@ -45,3 +43,4 @@ const usersSchema = mongoose.Schema(
   { timestamps: true }
 );
 const User = mongoose.model("users", usersSchema);
+module.exports = User;
