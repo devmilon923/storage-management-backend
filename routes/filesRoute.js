@@ -20,6 +20,7 @@ const upload = require("../middlewares/uploadFiles");
 const verifyUser = require("../middlewares/verifyUser");
 const route = express.Router();
 
+// Note: Main root route is : '/file'
 route.post("/upload", verifyUser, upload.array("files", 5), addFiles); // add files
 route.get("/share/:id", verifyUser, shareFile); //share file
 route.get("/folder/create/:name", verifyUser, createFolder); // create folder by :folderName

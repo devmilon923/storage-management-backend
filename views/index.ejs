@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Endpoints</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+      }
+      .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      .section {
+        margin-bottom: 20px;
+      }
+      .section h2 {
+        color: #444;
+        margin-bottom: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+        border: 1px solid #ddd;
+      }
+      th {
+        background-color: #f7f7f7;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>API Endpoints</h1>
+
+      <div class="section">
+        <h2>/users Routes</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Endpoint</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>POST</td>
+              <td>/create</td>
+              <td>Create a new user</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/login</td>
+              <td>Login a user</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td>/send-email-verification-otp</td>
+              <td>Send email verification OTP (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/send-reset-otp</td>
+              <td>Send reset password OTP (requires email)</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/verify-email-otp</td>
+              <td>Verify email OTP (requires Bearer token and action)</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/verify-reset-password-otp</td>
+              <td>Verify reset password OTP (requires email and action)</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td>/dashboard</td>
+              <td>Access user dashboard (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/change-password</td>
+              <td>Change user password (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td>/delete-account</td>
+              <td>Delete user account (requires Bearer token)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>/file Routes</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Endpoint</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>POST</td>
+              <td>/upload</td>
+              <td>Upload files (up to 5, requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td>/share/:id</td>
+              <td>Share a file by ID (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td>/folder/create/:name</td>
+              <td>Create a folder by name (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td>/folder/view/:name</td>
+              <td>View folder contents by name (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/rename/:id</td>
+              <td>Rename a file by ID (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td>/duplicate/:id</td>
+              <td>Duplicate a file by ID (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td>/view/:id</td>
+              <td>View a file by ID (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td>/view-all</td>
+              <td>View all files (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/private/space/create</td>
+              <td>Create a private space (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/private/space/login</td>
+              <td>Login to a private space (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/private/space/add-files</td>
+              <td>Add files to private space (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/private/space/remove-files</td>
+              <td>Remove files from private space (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/folder/add-files</td>
+              <td>Add files to a folder (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td>/remove</td>
+              <td>Delete files (requires Bearer token)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

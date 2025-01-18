@@ -5,16 +5,28 @@ const PrivateSpace = require("../models/privateSpaceSchema");
 const User = require("../models/users");
 const path = require("path");
 const addFiles = async (req, res) => {
+  //Post request:
   try {
     const files = req.files;
     if (!files || files.length === 0) {
       return res.status(400).send("No files uploaded.");
     }
 
+    const user = await User.findById(req.userInfo._id);
+    if (!user)
+      return res.status(400).send({
+        status: false,
+        message: "Invalid user",
+      });
+    if (!user.isVerifyed)
+      return res.status(400).send({
+        status: false,
+        message: "User not verifyed! please verify your email",
+      });
     const data = files.map(({ encoding, ...rest }) => {
       const format = {
         ...rest,
-        user: req.userInfo._id,
+        user: user._id,
         type: rest.mimetype.split("/")[1],
       };
       const { mimetype, ...finalData } = format;
@@ -30,6 +42,7 @@ const addFiles = async (req, res) => {
   }
 };
 const shareFile = async (req, res) => {
+  //Get request:
   try {
     const file = await Files.findById(req.params.id);
 
@@ -47,6 +60,7 @@ const shareFile = async (req, res) => {
   }
 };
 const viewFile = async (req, res) => {
+  //Get request:
   try {
     const file = await Files.findById(req.params.id);
     if (file?.user.toString() !== req.userInfo._id)
@@ -63,10 +77,22 @@ const viewFile = async (req, res) => {
   }
 };
 const createFolder = async (req, res) => {
+  //Get request:
   try {
+    const user = await Folders.findById(req.params.name);
+    if (!user)
+      return res.status(400).send({
+        status: false,
+        message: "Invalid user",
+      });
+    if (!user.isVerifyed)
+      return res.status(400).send({
+        status: false,
+        message: "User not verifyed! please verify your email",
+      });
     const folder = await Folders.findOne({
       name: req.params.name,
-      user: req.userInfo._id,
+      user: user._id,
     });
     if (folder) {
       return res.status(404).send("Already has this folder name");
@@ -83,16 +109,27 @@ const createFolder = async (req, res) => {
 };
 const createSpace = async (req, res) => {
   //Post request
+  const user = await Folders.findById(req.params.name);
+  if (!user)
+    return res.status(400).send({
+      status: false,
+      message: "Invalid user",
+    });
+  if (!user.isVerifyed)
+    return res.status(400).send({
+      status: false,
+      message: "User not verifyed! please verify your email",
+    });
   try {
     const space = await PrivateSpace.findOne({
-      user: req.userInfo._id,
+      user: user._id,
     });
     if (space) {
       return res.status(404).send("This already have one Private Space");
     }
     await PrivateSpace.create({
       pin: req.body.pin,
-      user: req.userInfo._id,
+      user: user._id,
     });
 
     res.status(200).send("Private Space Created Succesdfully");
@@ -102,9 +139,20 @@ const createSpace = async (req, res) => {
 };
 const loginSpace = async (req, res) => {
   //Post request
+  const user = await Folders.findById(req.params.name);
+  if (!user)
+    return res.status(400).send({
+      status: false,
+      message: "Invalid user",
+    });
+  if (!user.isVerifyed)
+    return res.status(400).send({
+      status: false,
+      message: "User not verifyed! please verify your email",
+    });
   try {
     const space = await PrivateSpace.findOne({
-      user: req.userInfo._id,
+      user: user._id,
     }).populate("files");
     if (!space) {
       return res.status(404).send("No private space found");
@@ -119,6 +167,7 @@ const loginSpace = async (req, res) => {
   }
 };
 const getFolderContent = async (req, res) => {
+  //Get request:
   try {
     const folder = await Folders.find({
       name: req.params.name,
@@ -131,6 +180,7 @@ const getFolderContent = async (req, res) => {
   }
 };
 const addFilesInSpace = async (req, res) => {
+  //Post request:
   try {
     await Files.updateMany(
       {
@@ -156,6 +206,7 @@ const addFilesInSpace = async (req, res) => {
   }
 };
 const removeFilesFromSpace = async (req, res) => {
+  //Post request:
   try {
     await Files.updateMany(
       {
@@ -181,7 +232,7 @@ const removeFilesFromSpace = async (req, res) => {
   }
 };
 const addFilesInFolder = async (req, res) => {
-  console.log(req.body);
+  //Post request:
   try {
     const addData = await Folders.updateMany(
       { user: req.userInfo._id, name: req.body.folderName },
@@ -196,6 +247,7 @@ const addFilesInFolder = async (req, res) => {
 };
 
 const removeFiles = async (req, res) => {
+  //Post request:
   try {
     const addData = await Folders.updateMany(
       { user: req.userInfo._id },
@@ -215,6 +267,7 @@ const removeFiles = async (req, res) => {
 };
 
 const viewFiles = async (req, res) => {
+  //Get request:
   try {
     const allFiles = await Files.find({
       user: req.userInfo._id,

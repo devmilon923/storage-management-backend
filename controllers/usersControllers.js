@@ -23,6 +23,16 @@ const createUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
+    if (!user)
+      return res.status(400).send({
+        status: false,
+        message: "Invalid credentials",
+      });
+    // if (!user.isVerifyed)
+    //   return res.status(400).send({
+    //     status: false,
+    //     message: "User not verifyed please verify your email",
+    //   });
     const dbPassword = user.password;
     const isValidPassword = await verifyHash(req.body.password, dbPassword);
     if (!isValidPassword)
@@ -216,6 +226,75 @@ const handleResetPasswordVerifyOtp = async (req, res) => {
     });
   }
 };
+
+const changePassword = async (req, res) => {
+  // post request:
+  try {
+    const user = await User.findById(req.userInfo._id);
+    if (!user)
+      return res.status(404).send({
+        status: false,
+        message: "Account not found",
+      });
+    const verifyPassword = await verifyHash(
+      req.body.oldPassword,
+      user.password
+    );
+    if (verifyPassword) {
+      try {
+        const hashPassword = await hash(req.body.newPassword);
+        if (!hashPassword) {
+          return res.status(404).send({
+            status: false,
+            message: "New password is required",
+          });
+        }
+        user.password = hashPassword;
+        await user.save();
+        return res.status(200).send({
+          status: true,
+          message: "Password change success",
+        });
+      } catch (error) {
+        return res.status(404).send({
+          status: false,
+          message: error.message,
+        });
+      }
+    } else {
+      return res.status(404).send({
+        status: false,
+        message: "Invalid password",
+      });
+    }
+  } catch (error) {
+    return res.status(404).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+const deleteAccount = async (req, res) => {
+  // get request:
+  try {
+    const user = await User.deleteOne({ _id: req.userInfo._id });
+    if (!user)
+      return res.status(404).send({
+        status: false,
+        message: "Account not found",
+      });
+
+    return res.status(200).send({
+      status: true,
+      message: "Account success to delete",
+    });
+  } catch (error) {
+    return res.status(404).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};
 module.exports = {
   createUser,
   loginUser,
@@ -224,4 +303,6 @@ module.exports = {
   handleEmailVerifyOtp,
   handleResetPasswordVerifyOtp,
   sendResetVerifyOtp,
+  changePassword,
+  deleteAccount,
 };

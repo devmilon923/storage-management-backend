@@ -8,6 +8,7 @@ const errorHandler = require("./middlewares/defaultError");
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.set("view engine", "ejs");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // MongoDB connection:
 mongoose
@@ -16,6 +17,10 @@ mongoose
   .catch((err) => console.log(err.message));
 
 // Routes:
+app.get("/", (req, res) => {
+  res.render("index.ejs");
+});
+
 app.use("/users", usersRoute);
 app.use("/file", filesRoute);
 

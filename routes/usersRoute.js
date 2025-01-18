@@ -7,11 +7,13 @@ const {
   handleEmailVerifyOtp,
   handleResetPasswordVerifyOtp,
   sendEmailVerifyOtp,
+  changePassword,
+  deleteAccount,
 } = require("../controllers/usersControllers");
 const verifyUser = require("../middlewares/verifyUser");
 
 const route = express.Router();
-
+// Note: Main root route is : '/users'
 route.post("/create", createUser);
 route.post("/login", loginUser);
 
@@ -24,5 +26,8 @@ route.post("/verify-email-otp", verifyUser, handleEmailVerifyOtp); // verify-res
 route.post("/verify-reset-password-otp", handleResetPasswordVerifyOtp); // verify-reset-password-otp by using request body and required field is : {action: #action_must_be:enum: ["verify_email", "reset_password"], email: #user_email, otp: #otp_get_from_email}
 
 route.get("/dashboard", verifyUser, dashboard);
+
+route.post("/change-password", verifyUser, changePassword);
+route.get("/delete-account", verifyUser, deleteAccount);
 
 module.exports = route;
