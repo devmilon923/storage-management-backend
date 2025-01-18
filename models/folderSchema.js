@@ -10,6 +10,7 @@ const folderSchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
+      unique: [true, "This name folder already has"],
     },
     files: [
       {

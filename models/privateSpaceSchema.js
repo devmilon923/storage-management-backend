@@ -12,6 +12,7 @@ const privateSpaceSchema = mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "files",
+        unique: [true, "Found same files in same room"],
       },
     ],
     pin: {
@@ -22,3 +23,4 @@ const privateSpaceSchema = mongoose.Schema(
   { timestamps: true }
 );
 const PrivateSpace = mongoose.model("privateSpace", privateSpaceSchema);
+module.exports = PrivateSpace;
