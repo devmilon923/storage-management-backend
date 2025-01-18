@@ -260,7 +260,9 @@ const viewFiles = async (req, res) => {
     const allFiles = await Files.find({
       user: req.userInfo._id,
       status: "public",
-    });
+    })
+      .sort({ createdAt: -1 })
+      .limit(10);
     res.status(200).send(allFiles || []);
   } catch (error) {
     res.status(500).send({ error: error.message });
@@ -293,6 +295,94 @@ const duplicateFile = async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 };
+
+const allFileInfo = async (req, res) => {
+  //Get request:
+  try {
+    const info = await Files.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(req.userInfo._id),
+        },
+      },
+      {
+        $group: {
+          _id: "$type", // Group by file type
+          files: { $push: "$$ROOT" }, // Push all files of the same type
+          totalSize: { $sum: "$size" }, // Calculate total size for each type
+        },
+      },
+      {
+        $group: {
+          _id: null, // Combine all groups for calculating finalSize
+          fileTypes: {
+            $push: {
+              type: "$_id",
+              files: "$files",
+              totalSize: "$totalSize",
+            },
+          },
+          finalSize: { $sum: "$totalSize" }, // Total size of all files
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude _id
+          fileTypes: 1, // Include the grouped file types
+          finalSize: 1, // Include the total size of all files
+        },
+      },
+    ]);
+    // res.status(200).send(info || []);
+    res.status(200).send(info[0] || { fileTypes: [], finalSize: 0 });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+const getAllFolderContent = async (req, res) => {
+  //Get request:
+  try {
+    const info = await Folders.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(req.userInfo._id),
+        },
+      },
+      {
+        $unwind: {
+          path: "$files",
+          preserveNullAndEmptyArrays: true, // Ensure folders with no files are still included
+        },
+      },
+      {
+        $lookup: {
+          from: "files",
+          localField: "files",
+          foreignField: "_id",
+          as: "fileDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$fileDetails",
+          preserveNullAndEmptyArrays: true, // Preserve folders with no file matches
+        },
+      },
+      {
+        $group: {
+          _id: "$name", // Group by folder name
+          files: { $push: "$fileDetails" }, // Gather all file details in an array
+          totalSize: { $sum: { $ifNull: ["$fileDetails.size", 0] } }, // Sum file sizes; handle nulls
+        },
+      },
+    ]);
+
+    res.status(200).send(info || { fileTypes: [], finalSize: 0 });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+
 module.exports = {
   addFiles,
   shareFile,
@@ -308,4 +398,6 @@ module.exports = {
   viewFiles,
   renameFile,
   duplicateFile,
+  getAllFolderContent,
+  allFileInfo,
 };

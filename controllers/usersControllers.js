@@ -49,12 +49,7 @@ const loginUser = async (req, res) => {
     });
   }
 };
-const dashboard = async (req, res) => {
-  res.status(200).send({
-    status: true,
-    message: req.userInfo,
-  });
-};
+
 const sendEmailVerifyOtp = async (req, res) => {
   try {
     const user = await User.findById(req.userInfo._id);
@@ -294,7 +289,7 @@ const deleteAccount = async (req, res) => {
 module.exports = {
   createUser,
   loginUser,
-  dashboard,
+
   sendEmailVerifyOtp,
   handleEmailVerifyOtp,
   handleResetPasswordVerifyOtp,

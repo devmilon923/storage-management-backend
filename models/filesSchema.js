@@ -15,11 +15,7 @@ const filesSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    folder: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "folders",
-      default: null,
-    },
+
     type: {
       type: String,
       required: true,

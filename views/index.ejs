@@ -145,7 +145,7 @@
             <tr>
               <td>POST</td>
               <td>/rename/:id</td>
-              <td>Rename a file by ID (requires Bearer token)</td>
+              <td>Rename a file by ID (requires Bearer token and name)</td>
             </tr>
             <tr>
               <td>GET</td>
@@ -159,8 +159,8 @@
             </tr>
             <tr>
               <td>GET</td>
-              <td>/view-all</td>
-              <td>View all files (requires Bearer token)</td>
+              <td>/view-recent</td>
+              <td>View recent uploaded files (requires Bearer token)</td>
             </tr>
             <tr>
               <td>POST</td>
@@ -191,6 +191,18 @@
               <td>POST</td>
               <td>/remove</td>
               <td>Delete files (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td>/view-all-info</td>
+              <td>Get all file info with total size (requires Bearer token)</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td>/folder/view-all</td>
+              <td>
+                Get all folder info with file and size (requires Bearer token)
+              </td>
             </tr>
           </tbody>
         </table>

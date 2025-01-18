@@ -14,6 +14,8 @@ const {
   viewFiles,
   renameFile,
   duplicateFile,
+  getAllFolderContent,
+  allFileInfo,
 } = require("../controllers/filesControlers");
 
 const upload = require("../middlewares/uploadFiles");
@@ -33,10 +35,13 @@ route.post(
 route.get("/share/:id", verifyUser, shareFile); //share file
 route.get("/folder/create/:name", verifyUser, checkUserStatus, createFolder); // create folder by :folderName
 route.get("/folder/view/:name", verifyUser, getFolderContent); // view folder by :folderName
+
+route.get("/folder/view-all", verifyUser, getAllFolderContent); // view folder by :folderName
+route.get("/view-all-info", verifyUser, allFileInfo);
 route.post("/rename/:id", verifyUser, renameFile); // view folder by request body:{name:'name2'} and params :fileID
 route.get("/duplicate/:id", verifyUser, duplicateFile); // duplicate File
 route.get("/view/:id", verifyUser, viewFile); // view file by :fileId
-route.get("/view-all", verifyUser, viewFiles); // view all files
+route.get("/view-recent", verifyUser, viewFiles); // view all files
 route.post("/private/space/create", verifyUser, checkUserStatus, createSpace); // create private space using request header Bearer with body:{pin: type_number}
 route.post("/private/space/login", verifyUser, loginSpace); // login private space using request header Bearer with body:{pin: type_number}
 
