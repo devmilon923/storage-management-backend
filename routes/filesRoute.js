@@ -18,18 +18,26 @@ const {
 
 const upload = require("../middlewares/uploadFiles");
 const verifyUser = require("../middlewares/verifyUser");
+const checkFile = require("../middlewares/checkUserStatus");
+const checkUserStatus = require("../middlewares/checkUserStatus");
 const route = express.Router();
 
 // Note: Main root route is : '/file'
-route.post("/upload", verifyUser, upload.array("files", 5), addFiles); // add files
+route.post(
+  "/upload",
+  verifyUser,
+  checkUserStatus,
+  upload.array("files", 5),
+  addFiles
+); // add files
 route.get("/share/:id", verifyUser, shareFile); //share file
-route.get("/folder/create/:name", verifyUser, createFolder); // create folder by :folderName
+route.get("/folder/create/:name", verifyUser, checkUserStatus, createFolder); // create folder by :folderName
 route.get("/folder/view/:name", verifyUser, getFolderContent); // view folder by :folderName
 route.post("/rename/:id", verifyUser, renameFile); // view folder by request body:{name:'name2'} and params :fileID
-route.get("/duplicate/:id", verifyUser, duplicateFile); // view folder by params :fileID
+route.get("/duplicate/:id", verifyUser, duplicateFile); // duplicate File
 route.get("/view/:id", verifyUser, viewFile); // view file by :fileId
 route.get("/view-all", verifyUser, viewFiles); // view all files
-route.post("/private/space/create", verifyUser, createSpace); // create private space using request header Bearer with body:{pin: type_number}
+route.post("/private/space/create", verifyUser, checkUserStatus, createSpace); // create private space using request header Bearer with body:{pin: type_number}
 route.post("/private/space/login", verifyUser, loginSpace); // login private space using request header Bearer with body:{pin: type_number}
 
 route.post("/private/space/add-files", verifyUser, addFilesInSpace); // add-files in private space using request header Bearer with body: ['files_id']

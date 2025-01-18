@@ -1,4 +1,4 @@
-const { get } = require("http");
+const mongoose = require("mongoose");
 const Files = require("../models/filesSchema");
 const Folders = require("../models/folderSchema");
 const PrivateSpace = require("../models/privateSpaceSchema");
@@ -8,25 +8,15 @@ const addFiles = async (req, res) => {
   //Post request:
   try {
     const files = req.files;
+
     if (!files || files.length === 0) {
       return res.status(400).send("No files uploaded.");
     }
 
-    const user = await User.findById(req.userInfo._id);
-    if (!user)
-      return res.status(400).send({
-        status: false,
-        message: "Invalid user",
-      });
-    if (!user.isVerifyed)
-      return res.status(400).send({
-        status: false,
-        message: "User not verifyed! please verify your email",
-      });
     const data = files.map(({ encoding, ...rest }) => {
       const format = {
         ...rest,
-        user: user._id,
+        user: req.userInfo._id,
         type: rest.mimetype.split("/")[1],
       };
       const { mimetype, ...finalData } = format;
@@ -79,20 +69,9 @@ const viewFile = async (req, res) => {
 const createFolder = async (req, res) => {
   //Get request:
   try {
-    const user = await Folders.findById(req.params.name);
-    if (!user)
-      return res.status(400).send({
-        status: false,
-        message: "Invalid user",
-      });
-    if (!user.isVerifyed)
-      return res.status(400).send({
-        status: false,
-        message: "User not verifyed! please verify your email",
-      });
     const folder = await Folders.findOne({
       name: req.params.name,
-      user: user._id,
+      user: req.userInfo._id,
     });
     if (folder) {
       return res.status(404).send("Already has this folder name");
@@ -109,27 +88,17 @@ const createFolder = async (req, res) => {
 };
 const createSpace = async (req, res) => {
   //Post request
-  const user = await Folders.findById(req.params.name);
-  if (!user)
-    return res.status(400).send({
-      status: false,
-      message: "Invalid user",
-    });
-  if (!user.isVerifyed)
-    return res.status(400).send({
-      status: false,
-      message: "User not verifyed! please verify your email",
-    });
+
   try {
     const space = await PrivateSpace.findOne({
-      user: user._id,
+      user: req.userInfo._id,
     });
     if (space) {
       return res.status(404).send("This already have one Private Space");
     }
     await PrivateSpace.create({
       pin: req.body.pin,
-      user: user._id,
+      user: req.userInfo._id,
     });
 
     res.status(200).send("Private Space Created Succesdfully");
@@ -139,20 +108,10 @@ const createSpace = async (req, res) => {
 };
 const loginSpace = async (req, res) => {
   //Post request
-  const user = await Folders.findById(req.params.name);
-  if (!user)
-    return res.status(400).send({
-      status: false,
-      message: "Invalid user",
-    });
-  if (!user.isVerifyed)
-    return res.status(400).send({
-      status: false,
-      message: "User not verifyed! please verify your email",
-    });
+
   try {
     const space = await PrivateSpace.findOne({
-      user: user._id,
+      user: req.userInfo._id,
     }).populate("files");
     if (!space) {
       return res.status(404).send("No private space found");
@@ -169,12 +128,41 @@ const loginSpace = async (req, res) => {
 const getFolderContent = async (req, res) => {
   //Get request:
   try {
-    const folder = await Folders.find({
-      name: req.params.name,
-      user: req.userInfo._id,
-    }).populate("files");
+    const folder = await Folders.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(req.userInfo._id),
+          name: req.params.name,
+        },
+      },
+      {
+        $unwind: "$files",
+      },
+      {
+        $lookup: {
+          from: "files",
+          localField: "files",
+          foreignField: "_id",
+          as: "files",
+        },
+      },
+      {
+        $unwind: "$files",
+      },
+      {
+        $match: {
+          "files.status": "public",
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          files: 1,
+        },
+      },
+    ]);
 
-    res.status(200).send(folder.files || []);
+    res.status(200).send(folder);
   } catch (error) {
     res.status(500).send({ error: error.message });
   }

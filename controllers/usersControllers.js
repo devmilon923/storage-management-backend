@@ -28,11 +28,7 @@ const loginUser = async (req, res) => {
         status: false,
         message: "Invalid credentials",
       });
-    // if (!user.isVerifyed)
-    //   return res.status(400).send({
-    //     status: false,
-    //     message: "User not verifyed please verify your email",
-    //   });
+
     const dbPassword = user.password;
     const isValidPassword = await verifyHash(req.body.password, dbPassword);
     if (!isValidPassword)
